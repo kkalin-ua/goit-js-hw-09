@@ -8,6 +8,11 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 const dateTimeInputEl = document.querySelector('#datetime-picker');
 const btnStartEl = document.querySelector('button[data-start]');
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { Report } from 'notiflix/build/notiflix-report-aio';
+import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
+import { Loading } from 'notiflix/build/notiflix-loading-aio';
+import { Block } from 'notiflix/build/notiflix-block-aio';
 
 
 // console.log(dateTimeInputEl);
@@ -59,23 +64,18 @@ let options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     
-    // console.log(btnStartEl);
+
     let dateNum = selectedDates[0]-0;
     let curentDate = Date.now()
+    // console.log(btnStartEl);
     // console.log(dateNum);
     // console.log(Date.now())
-    
-  
     // console.log(selectedDates[0]-0);
-    
-
 
     if (selectedDates[0] < new Date()) {
-      
-      console.log('Please choose a date in the future');
+      Notify.failure('Please choose a date in the future');
       return;
     }
-
 
     btnStartEl.addEventListener('click', onBtnClick);
 
@@ -91,17 +91,14 @@ let options = {
       console.log(`Разница дат: ${dateDelta-0}`);
       // console.log(`${pad(days)} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`);
 
-
-
       let intervalId = setInterval(() => {
-        // console.log(`Разница дат: ${dateDelta-0}`);
-      // console.log(dateDelta);
       dateDelta = dateNum - Date.now();
       let { days, hours, minutes, seconds } = convertMs(dateDelta);
 
+      if (dateDelta < 1) {
+        clearInterval(intervalId);
+      }
       // console.log(`${pad(days)} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`)
-      // console.log(convertMs(deltaDate));
-
 
       const dataDaysEl = document.querySelector('span[data-days]');
       dataDaysEl.innerHTML = days;
@@ -111,14 +108,8 @@ let options = {
       dataNinutesEl.innerHTML = minutes;
       const dataSecondsEl = document.querySelector('span[data-seconds]');
       dataSecondsEl.innerHTML = seconds;
-
     }, 1000);
-
-
-      if (dateDelta < 0) {
-        clearInterval(intervalId);
-      }
-    }
+   }
   },
 };
 
